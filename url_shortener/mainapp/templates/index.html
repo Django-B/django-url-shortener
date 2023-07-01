@@ -12,15 +12,16 @@
     {% include "header.html" %}
   </header>
   <main class="container">
-    <form action="{% url 'short' %}" method="post">
-      {% csrf_token %}
-      <div class="input-group mb-3 form">
-        <input type="text" value="{% if link %}{{ link }}{% endif %}" class="form-control" placeholder="Введите ссылку" name="link" aria-label="Ссылка" aria-describedby="button-addon2">
-        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Short</button>
-      </div>
-    </form>
-    <div class="form2">
-      <input readonly value="{% if short_link %}{% url "index" %}{{ short_link }}{% endif %}" type="text" class="form-control" placeholder="Сокращенная ссылка" aria-label="Ссылка" aria-describedby="button-addon2">
+    <div class="forms">
+      <form action="{% url 'index' %}" method="post">
+        {% csrf_token %}
+        <div class="input-group">
+          <input type="text" value="{{ link }}" class="form-control" placeholder="Введите ссылку" name="link" aria-label="Ссылка" aria-describedby="button-addon2">
+          <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Short</button>
+        </div>
+      </form>
+      <error>{{ error }}</error>
+      <input readonly value="{{ short_link }}" type="text" class="form-control" placeholder="Сокращенная ссылка" aria-label="Ссылка" aria-describedby="button-addon2">
     </div>
   </main>
 </body>

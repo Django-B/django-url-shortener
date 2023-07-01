@@ -1,27 +1,66 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse as HR
 from django.urls import reverse
 
+from django.core.handlers.wsgi import WSGIRequest
+
+from random import choice
 
 from .models import Link
+from .forms import LinkForm 
 
-
-def short_link(link, absolute_url):
-    # он должен создать уникальный символьный 6-ти значный ключ в базе данных и привязать к нему ссылку
-    # вернуть ссылку типа http://localhost:8000/short/<КЛЮЧ>, которая будет делать переадресацию на введеный сайт
+def gen_key():
+    chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
+    key = ''.join([choice(chars) for x in range(6)])
+    return key
     
-    link = Link()
+def short_link(link, index_url):
+    links = Link.objects.all()
+    key = gen_key()
+    key_exist = bool(links.filter(key=key))
+    if not key_exist:
+        link = Link(link=link, key=key)
+        link.save()
+        return index_url+'short/'+key
+    else:
+        return short_link(link, index_url)
 
 
-def index(request):
+def index(request: WSGIRequest):
+    # if 'links' not in request.session:
+    #     request.session['links']=[]
+
+    if request.method == 'POST':
+        data = request.POST
+        form = LinkForm(data)
+        link = request.POST.get('link')
+        if form.is_valid():
+            index_url = request.build_absolute_uri()
+
+            new_link = short_link(link, index_url)
+
+            # request.session[links].append([link, new_link])
+
+            data = {
+                'link': link,
+                'short_link': new_link,
+                'error': ''
+            }
+            return render(request, 'index.html', context=data)
+        else:
+            data = {
+                'link': link,
+                'short_link': '',
+                'error': 'Некорректный ввод ⌨'
+            }
+            return render(request, 'index.html', context=data)
+        
     return render(request, 'index.html')
-
-def short(request):
-    absolute_url = request.build_absolute_uri()
-    print(absolute_url)
-    link = request.POST.get('link', None)
-    link = short_link(link, absolute_url)
-    return render(request, 'index.html', context={'link': link, 'short_link': link})
     
 def redirect_link(request, key):
-    pass
+    links = Link.objects.all()
+    link = links.filter(key=key)
+    if len(link)>0:
+        return redirect(link[0].link)
+    else: 
+        return redirect('index')

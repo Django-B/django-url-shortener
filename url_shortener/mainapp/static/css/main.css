@@ -1,9 +1,9 @@
-.form {
-  margin: 0 auto;
+.forms {
   width: 70vh;
+  margin: 0 auto;
   margin-top: 30vh;
 }
-.form2 {
-  margin: 0 auto;
-  width: 70vh;
+error {
+  margin-left: 2vh;
+  color: brown;
 }
