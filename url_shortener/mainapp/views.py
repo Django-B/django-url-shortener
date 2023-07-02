@@ -21,7 +21,7 @@ def short_link(link, index_url):
     if not key_exist:
         link = Link(link=link, key=key)
         link.save()
-        return index_url+'short/'+key
+        return index_url+key
     else:
         return short_link(link, index_url)
 
@@ -33,10 +33,10 @@ def index(request: WSGIRequest):
     if request.method == 'POST':
         data = request.POST
         form = LinkForm(data)
-        link = request.POST.get('link')
         if form.is_valid():
             index_url = request.build_absolute_uri()
 
+            link = form.clean_link()
             new_link = short_link(link, index_url)
 
             # request.session[links].append([link, new_link])
