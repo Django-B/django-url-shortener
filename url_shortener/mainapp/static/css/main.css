@@ -7,3 +7,26 @@ error {
   margin-left: 2vh;
   color: brown;
 }
+
+.links {
+  width: 100vh;
+  margin: 0 auto;
+  margin-top: 2vh;
+  text-align: center;
+}
+
+.link {
+  display: inline;
+  background-color: #C4DFDF;
+  border-radius: 10px;
+}
+
+.link1 {
+  border-radius: 5px;
+  background-color: #b7e0ff;
+}
+
+.link2 {
+  border-radius: 5px;
+  background-color: #98EECC;
+}
